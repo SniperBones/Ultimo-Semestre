@@ -2,6 +2,7 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 
 
 public class Cliente {
@@ -9,13 +10,22 @@ public class Cliente {
         Socket conexion = new Socket("localhost",5000);
         DataOutputStream salida = new DataOutputStream(conexion.getOutputStream());
         DataInputStream entrada = new DataInputStream(conexion.getInputStream());
-        salida.writeInt(123);
-        salida.writeDouble(1234567890.1234567890);
-        salida.write("Hola".getBytes());
+        long m1 = System.currentTimeMillis();
+        ByteBuffer b = ByteBuffer.allocate(5*8);
+        b.putDouble(1.1);
+        b.putDouble(1.2);
+        b.putDouble(1.3);
+        b.putDouble(1.4);
+        b.putDouble(1.5);
+        byte[] a = b.array();
+        salida.write(a);
         byte[] buffer = new byte[4];
         read(entrada,buffer,0,4);
         System.out.println(new String(buffer,"UTF-8"));
-        //conexion.close();
+        long m2 = System.currentTimeMillis();
+        System.out.println("Tiempo(ms): " + (m2 - m1));
+        Thread.sleep(1000);
+        conexion.close();
     }
     static void read(DataInputStream f,byte[] b,int posicion,int longitud) throws Exception{
         while (longitud > 0){
