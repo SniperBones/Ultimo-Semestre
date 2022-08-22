@@ -7,7 +7,6 @@ import java.nio.ByteBuffer;
 
 public class Servidor {
     public static void main(String[] args) throws Exception {
-        
         ServerSocket servidor = new ServerSocket(5000);
         Socket conexion = servidor.accept();
         DataOutputStream salida = new DataOutputStream(conexion.getOutputStream());
@@ -20,6 +19,7 @@ public class Servidor {
         salida.write("Hola".getBytes());
         long m2 = System.currentTimeMillis();
         System.out.println("Tiempo(ms): "+ (m2 - m1));
+        System.out.println();
         conexion.close();
         
     }
