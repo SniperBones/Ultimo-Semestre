@@ -14,10 +14,9 @@ public class Cliente {
         long m1 = System.currentTimeMillis();
         ByteBuffer b = ByteBuffer.allocate(10000*8);
         for(int i = 1 ;i<10001;i++){
-            b.putDouble(i);
+            salida.writeDouble(i);
         }
-        byte[] a = b.array();
-        salida.write(a);
+        ;
         byte[] buffer = new byte[4];
         read(entrada,buffer,0,4);
         System.out.println(new String(buffer,"UTF-8"));

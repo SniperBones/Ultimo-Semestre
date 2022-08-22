@@ -2,6 +2,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 public class Servidor {
@@ -11,10 +12,10 @@ public class Servidor {
         DataOutputStream salida = new DataOutputStream(conexion.getOutputStream());
         DataInputStream entrada = new DataInputStream(conexion.getInputStream());
         long m1 = System.currentTimeMillis();
-        byte[] a = new byte[10000*8];
-        read(entrada,a,0,10000*8);
-        ByteBuffer b = ByteBuffer.wrap(a);
-        for (int i = 1; i < 10001; i++) System.out.println(b.getDouble());
+        for(int i=1 ;i<10001;i++){
+            double x = entrada.readDouble();
+            System.out.println(x);
+        }
         salida.write("Hola".getBytes());
         long m2 = System.currentTimeMillis();
         System.out.println("Tiempo(ms): "+ (m2 - m1));
