@@ -3,6 +3,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 
 
 public class Cliente {
@@ -11,12 +12,10 @@ public class Cliente {
         DataOutputStream salida = new DataOutputStream(conexion.getOutputStream());
         DataInputStream entrada = new DataInputStream(conexion.getInputStream());
         long m1 = System.currentTimeMillis();
-        ByteBuffer b = ByteBuffer.allocate(5*8);
-        b.putDouble(1.1);
-        b.putDouble(1.2);
-        b.putDouble(1.3);
-        b.putDouble(1.4);
-        b.putDouble(1.5);
+        ByteBuffer b = ByteBuffer.allocate(10000*8);
+        for(int i = 1 ;i<10001;i++){
+            b.putDouble(i);
+        }
         byte[] a = b.array();
         salida.write(a);
         byte[] buffer = new byte[4];
