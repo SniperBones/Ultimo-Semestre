@@ -17,7 +17,6 @@ public class Servidor {
         salida.write("Hola".getBytes());
         long m2 = System.currentTimeMillis();
         System.out.println("Tiempo(ms): "+ (m2 - m1));
-        System.out.println();
         conexion.close();
         
     }
