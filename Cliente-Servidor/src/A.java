@@ -1,10 +1,14 @@
 class A extends Thread
 {
   static long n;
+  static Object obj = new Object();
   public void run()
   {
     for (int i = 0; i < 100000; i++)
+      synchronized(obj)
+      {
         n++;
+      }
   }
   public static void main(String[] args) throws Exception
   {
