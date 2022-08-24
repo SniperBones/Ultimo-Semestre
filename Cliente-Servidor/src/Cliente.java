@@ -2,17 +2,15 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
 
 
 public class Cliente {
     public static void main(String[] args) throws Exception {
+        // Sending 10000 doubles to the server and then reading the response.
         Socket conexion = new Socket("localhost",5000);
         DataOutputStream salida = new DataOutputStream(conexion.getOutputStream());
         DataInputStream entrada = new DataInputStream(conexion.getInputStream());
         long m1 = System.currentTimeMillis();
-        ByteBuffer b = ByteBuffer.allocate(10000*8);
         for(int i = 1 ;i<10001;i++){
             salida.writeDouble(i);
         }

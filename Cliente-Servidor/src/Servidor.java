@@ -2,8 +2,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
 
 public class Servidor {
     public static void main(String[] args) throws Exception {
