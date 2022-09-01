@@ -26,8 +26,7 @@ class ServidorA{
                         break;
                     }
                 }
-                salida.write(flag.getBytes());
-                System.out.println("Ya sali");
+                salida.writeUTF(flag);
                 salida.close();
                 entrada.close();
                 conexion.close();

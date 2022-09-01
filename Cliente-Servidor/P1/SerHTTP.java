@@ -7,16 +7,18 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SerHTTP {
-    
+    static String flag="NO DIVIDE";
     public static void main(String[] args) throws Exception {
         ServerSocket servidor = new ServerSocket(8081);
         Socket conexion = servidor.accept();
         BufferedReader entrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
         PrintWriter salida = new PrintWriter(conexion.getOutputStream());
         String s=entrada.readLine();
+        long num = numero(s);
+     
         System.out.println(s);
         if (s.startsWith("GET /primo?numero=")){
-            String respuesta = "<html><H1>Entro</H1><br><H2>Numero:"+numero(s)+"</H2></html>";
+            String respuesta = "<html><H1>Entro</H1><br><H2>Numero:"+num+"</H2></html>";
             salida.println("HTTP/1.1 200 OK");
             salida.println("Content-type: text/html; charset=utf-8");
             salida.println("Content-length: "+respuesta.length());
@@ -28,14 +30,15 @@ public class SerHTTP {
             salida.println("HTTP/1.1 404 File Not Found");
             salida.flush();
         }
-        entrada.close();
-        conexion.close();
-        servidor.close();
+        for(;;){
+            calcPrimo w = new calcPrimo(5000,num,2,num-1);
+            w.start();
+        }
     }
     static class calcPrimo extends Thread {
-        int num,numIni,numFin;
+        long num,numIni,numFin;
         int puerto;
-        calcPrimo(int puerto,int num,int numIni,int numFin){
+        calcPrimo(int puerto,long num,long numIni,long numFin){
             this.num = num;
             this.numFin = numFin;
             this.numIni = numIni;
@@ -46,7 +49,10 @@ public class SerHTTP {
                 Socket conexion = new Socket("localhost",puerto);
                 DataOutputStream salida = new DataOutputStream(conexion.getOutputStream());
                 DataInputStream entrada = new DataInputStream(conexion.getInputStream());
-                
+                salida.writeLong(num);
+                salida.writeLong(numIni);
+                salida.writeLong(numFin);
+
                 entrada.close();
                 salida.close();
                 conexion.close();
@@ -63,9 +69,9 @@ public class SerHTTP {
             longitud -= n;
         }
     }
-    static int numero(String s) throws Exception{
+    static long numero(String s) throws Exception{
         String[] newStr = s.split("\\s+");
         String[] nStr = newStr[1].split("=");
-        return Integer.parseInt(nStr[1]);
+        return Long.parseLong(nStr[1]);
     }
 }
