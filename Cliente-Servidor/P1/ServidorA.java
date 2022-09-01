@@ -2,9 +2,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 
-class Servidor2{
+class ServidorA{
     static class Worker extends Thread{
         Socket conexion;
         Worker(Socket conexion){
@@ -14,15 +13,21 @@ class Servidor2{
             try{
                 DataOutputStream salida = new DataOutputStream(conexion.getOutputStream());
                 DataInputStream entrada = new DataInputStream(conexion.getInputStream());
-
-                long m1 = System.currentTimeMillis();
-                for(int i=1 ;i<10001;i++){
-                    double x = entrada.readDouble();
-                    System.out.println(x);
+                int num,numIni,numFin;
+                int mod;
+                String flag="NO DIVIDE";
+                num = entrada.readInt();
+                numIni=entrada.readInt();
+                numFin=entrada.readInt();
+                for(int i=numIni;i<=numFin;i++){
+                    mod=num%i;
+                    if(mod==0){
+                        flag="DIVIDE";
+                        break;
+                    }
                 }
-                salida.write("Hola".getBytes());
-                long m2 = System.currentTimeMillis();
-                System.out.println("Tiempo(ms): "+ (m2 - m1));
+                salida.write(flag.getBytes());
+                System.out.println("Ya sali");
                 salida.close();
                 entrada.close();
                 conexion.close();
