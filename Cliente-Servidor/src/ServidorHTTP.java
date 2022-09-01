@@ -17,8 +17,14 @@ class ServidorHTTP{
                 BufferedReader entrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
                 PrintWriter salida = new PrintWriter(conexion.getOutputStream());
                 String s= entrada.readLine();
+
                 System.out.println(s);
                 System.out.println(conexion.getRemoteSocketAddress().toString());
+                for (;;){
+                    String encabezado= entrada.readLine();
+                    System.out.println(encabezado);
+                    if (encabezado.equals("")) break;
+                }
                 if (s.startsWith("GET /hola")){
                     String respuesta = "<html><button onclick='alert(\"Se presionó el botón\")'>Aceptar</button></html>";
                     salida.println("HTTP/1.1 200 OK");
@@ -34,10 +40,9 @@ class ServidorHTTP{
                     salida.println("HTTP/1.1 404 File Not Found");
                     salida.flush();
                 }
-            } catch (Exception e) {
+            }catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-
         }
     }
     public static void main(String[] args) throws Exception{
