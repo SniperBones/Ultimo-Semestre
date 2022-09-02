@@ -15,12 +15,18 @@ class ServidorA{
                 DataInputStream entrada = new DataInputStream(conexion.getInputStream());
                 long num,numIni,numFin;
                 long mod;
+
+                // Lectura de las variables enviadas por el servidor B(HTTP) para su evaluacion
                 num = entrada.readLong();
                 numIni=entrada.readLong();
                 numFin=entrada.readLong();
-                System.out.println(num+","+numIni+","+numFin);
+
+                //System.out.println(num+","+numIni+","+numFin);
+
+                // Ciclo de comprobacion por fuerza bruta del numero primo
                 for(long i=numIni;i<=numFin;i++){
                     mod=num%i;
+                    // Condicionales que daran respuesta al servidor si el numero es o no primo
                     if(mod==0){
                         salida.writeUTF("DIVIDE");
                         break;
@@ -29,6 +35,7 @@ class ServidorA{
                         salida.writeUTF("NO DIVIDE");
                     }
                 }
+                // Cierre de los buffers y conexión
                 salida.close();
                 entrada.close();
                 conexion.close();
@@ -39,7 +46,9 @@ class ServidorA{
         }
     }
     public static void main(String[] args) throws Exception{
-        ServerSocket servidor = new ServerSocket(5000);
+        // Establecimiento del conexion por el puerto en el argumento
+        ServerSocket servidor = new ServerSocket(Integer.parseInt(args[0]));
+        System.out.println("Servidor iniciado en el puerto("+args[0]+")");
         for(;;){
             Socket conexion = servidor.accept();
             Worker w = new Worker(conexion);
