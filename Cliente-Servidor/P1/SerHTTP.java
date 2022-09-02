@@ -7,32 +7,35 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SerHTTP {
-    static String flag="NO DIVIDE";
+    static String flag="";
     public static void main(String[] args) throws Exception {
         ServerSocket servidor = new ServerSocket(8081);
         Socket conexion = servidor.accept();
-        BufferedReader entrada = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
-        PrintWriter salida = new PrintWriter(conexion.getOutputStream());
-        String s=entrada.readLine();
+        BufferedReader entradaServidor = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
+        PrintWriter salidaServidor = new PrintWriter(conexion.getOutputStream());
+        String s=entradaServidor.readLine();
         long num = numero(s);
-     
-        System.out.println(s);
         if (s.startsWith("GET /primo?numero=")){
-            String respuesta = "<html><H1>Entro</H1><br><H2>Numero:"+num+"</H2></html>";
-            salida.println("HTTP/1.1 200 OK");
-            salida.println("Content-type: text/html; charset=utf-8");
-            salida.println("Content-length: "+respuesta.length());
-            salida.println();
-            salida.flush();
-            salida.println(respuesta);
-            salida.flush();
+            for(;;){
+                calcPrimo w = new calcPrimo(5000,num,2,num-1);
+                w.start();
+                if(flag.equals("DIVIDE")){
+                    String respuesta = "<html><H1>El numero "+num+" no es primo</H1></html>";
+                    salidaServidor.println("HTTP/1.1 200 OK");
+                    salidaServidor.println("Content-type: text/html; charset=utf-8");
+                    salidaServidor.println("Content-length: "+respuesta.length());
+                    salidaServidor.println();
+                    salidaServidor.flush();
+                    salidaServidor.println(respuesta);
+                    salidaServidor.flush();
+                    break;
+                }
+                w.sleep(3000);
+                w.join();
+            }
         }else{
-            salida.println("HTTP/1.1 404 File Not Found");
-            salida.flush();
-        }
-        for(;;){
-            calcPrimo w = new calcPrimo(5000,num,2,num-1);
-            w.start();
+            salidaServidor.println("HTTP/1.1 404 File Not Found");
+            salidaServidor.flush();
         }
     }
     static class calcPrimo extends Thread {
@@ -42,7 +45,7 @@ public class SerHTTP {
             this.num = num;
             this.numFin = numFin;
             this.numIni = numIni;
-            this.puerto = puerto;
+            this.puerto = puerto;    
         }
         public void run(){
             try {
@@ -53,14 +56,17 @@ public class SerHTTP {
                 salida.writeLong(numIni);
                 salida.writeLong(numFin);
 
+                flag = entrada.readUTF();
+                System.out.println(flag);
+
                 entrada.close();
                 salida.close();
                 conexion.close();
             } catch (Exception e) {
                 //TODO: handle exception
             }
+            
         }
-        
     }
     static void read(DataInputStream f,byte[] b,int posicion,int longitud) throws Exception{
         while (longitud > 0){

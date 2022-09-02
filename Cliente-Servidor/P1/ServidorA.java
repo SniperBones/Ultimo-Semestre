@@ -13,20 +13,22 @@ class ServidorA{
             try{
                 DataOutputStream salida = new DataOutputStream(conexion.getOutputStream());
                 DataInputStream entrada = new DataInputStream(conexion.getInputStream());
-                int num,numIni,numFin;
-                int mod;
-                String flag="NO DIVIDE";
-                num = entrada.readInt();
-                numIni=entrada.readInt();
-                numFin=entrada.readInt();
-                for(int i=numIni;i<=numFin;i++){
+                long num,numIni,numFin;
+                long mod;
+                num = entrada.readLong();
+                numIni=entrada.readLong();
+                numFin=entrada.readLong();
+                System.out.println(num+","+numIni+","+numFin);
+                for(long i=numIni;i<=numFin;i++){
                     mod=num%i;
                     if(mod==0){
-                        flag="DIVIDE";
+                        salida.writeUTF("DIVIDE");
                         break;
                     }
+                    if(i==numFin && mod!=0){
+                        salida.writeUTF("NO DIVIDE");
+                    }
                 }
-                salida.writeUTF(flag);
                 salida.close();
                 entrada.close();
                 conexion.close();
@@ -34,7 +36,6 @@ class ServidorA{
             catch(Exception e){
                 System.out.println(e.getMessage());
             }
-
         }
     }
     public static void main(String[] args) throws Exception{
