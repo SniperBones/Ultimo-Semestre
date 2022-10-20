@@ -136,7 +136,7 @@ class Automata:
             factor = int(listaCaminos[camino][1])
             print(factor*tab+'└─>'+listaCaminos[camino])
 
-automata1 = Automata('3.txt', '+a@a.aa')
+automata1 = Automata('AF.txt', 'azbabb')
 print(f'Estados del automata: {automata1.estadosQ}')
 print(f'Estado inicial: {automata1.estadoInicial}')
 print(f'Estado(s) final(es): {automata1.estadosFinales}')
