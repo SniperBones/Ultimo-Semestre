@@ -1,24 +1,27 @@
 
 public class MultiplicaMatriz_2 {
-    static int N = 1000;
-    static int[][] A = new int[N][N];
-    static int[][] B = new int[N][N];
-    static int[][] C = new int[N][N];
+    static int N ;
+    static float[][] A ;
+    static float[][] B ;
+    static float[][] C ;
 
     public static void main(String[] args){
-        long t1 = System.currentTimeMillis();
+        N = Integer.parseInt(args[0]);
+        A = new float[N][N];
+        B = new float[N][N];
+        C = new float[N][N];
         // inicializa las matrices A y B
         for (int i = 0; i < N; i++){
             for (int j = 0; j < N; j++){
-                A[i][j] = 2 * i - j;
-                B[i][j] = i + 2 * j;
+                A[i][j] = i + 3 * j;
+                B[i][j] = 2 * i - j;
                 C[i][j] = 0;
             }
         }
         // transpone la matriz B, la matriz traspuesta queda en B
         for (int i = 0; i < N; i++){
             for (int j = 0; j < i; j++){
-                int x = B[i][j];
+                float x = B[i][j];
                 B[i][j] = B[j][i];
                 B[j][i] = x;
             }
@@ -32,7 +35,32 @@ public class MultiplicaMatriz_2 {
                 }
             }
         }
-        long t2 = System.currentTimeMillis();
-        System.out.println("Tiempo: " + (t2 - t1) + "ms");
+        if(N<=12){
+            mostrarMatriz(A, "A");
+            mostrarMatriz(B, "B");
+            mostrarMatriz(C, "C");
+        }
+        checksum(C);
+    }
+    static void mostrarMatriz(float[][] matriz,String nombre){
+        System.out.println("------- Matriz "+nombre+" ---------");
+        for (int x=0; x < matriz.length; x++) {
+            System.out.print("|");
+            for (int y=0; y < matriz[x].length; y++) {
+              System.out.print (matriz[x][y]);
+              if (y!=matriz[x].length-1) System.out.print("\t");
+            }
+            System.out.println("|");
+        }
+        System.out.println("------- Matriz "+nombre+" ---------");
+    }
+    public static void checksum(float[][] matriz){
+        float suma = 0;
+        for (int x=0; x < matriz.length; x++) {
+            for (int y=0; y < matriz[x].length; y++) {
+                suma+= matriz[x][y];
+            }
+        }
+        System.out.println("Checksum:"+suma);
     }
 }

@@ -1,8 +1,3 @@
-from pickle import APPEND
-from re import T
-from sys import api_version
-
-
 class AF:
     def __init__(self,nArchivo,cadena):
         self.nArchivo = nArchivo
@@ -44,18 +39,18 @@ class AF:
         print('Estado(s) final(es): '+','.join(self.F))
 
     def Trancision(self,inicio,string):
-        print(f'Cadena:{string} , Longitud:{len(string)}')
         if string!='' and len(string)!=0:
             for tRange in range(len(self.T)):
                 filaTrancision = self.T[tRange]
-                ##print(filaTrancision)
                 if filaTrancision[0] == inicio and filaTrancision[1] == string[0]:
+                    #print(f'Cadena:{string} , Longitud:{len(string)}')
+                    #print(filaTrancision)
                     print(f'q{filaTrancision[0]} -{filaTrancision[1]}-> q{filaTrancision[2]}')
                     cadenaTemp = string[1:]
                     self.Trancision(filaTrancision[2],cadenaTemp)
-                    break;
         if string=='':
             print('No hay caracter a evaluar')
+            print('-------------------------')
 
 
-AF('AF.txt','baab')
+AF('AF.txt','abab')
