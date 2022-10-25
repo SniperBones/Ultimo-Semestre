@@ -3,9 +3,9 @@ class Automata:
         self.nombreArchivo = nombreDelArchivo
         self.cadena = cadenaAEvaluar
         self.estadosQ = self.obtenerEstados()
-        self.estadosFinales = self.obtenerEstadosFinales()
+        self.estadosFinales = self.obtenerAlfabeto()
         self.estadoInicial = self.obtenerEstadoInicial()
-        self.alfabeto = self.obtenerAlfabeto()
+        self.alfabeto = self.obtenerEstadosFinales()
         self.deltas = self.obtenerDeltas()
         self.listaTrans = self.transiciones()
 
