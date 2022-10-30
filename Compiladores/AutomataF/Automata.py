@@ -136,4 +136,9 @@ class AF:
 #AF('AF.txt','ababzbabababbbbaaaabbaab')
 #AF('AF2.txt','acaabcbcab')
 #AF('AF3.txt','acbbabab')
-AF('AF4.txt','aaabbababa')
+#AF('AF4.txt','aaabbababa')
+AF('T1.txt','a.aa')
+AF('T1.txt','+a.a')
+AF('T1.txt','+aa.aa')
+AF('T1.txt','+aba@.aa')
+
