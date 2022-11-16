@@ -100,15 +100,11 @@ class AF:
             else:
                 for t in range(len(self.T)):
                     regla = self.T[t]
-                    if regla[0] == inicio and regla[1] == 'E'and not regla[0]=='-1':
+                    if (regla[0] == inicio and regla[1] == 'E'and not regla[0]=='-1'):
                         if (len(cadena) == 0 and regla[2] in self.F ):
                             listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]} VALIDO ©')
                         else:
-                            if (len(cadena) == 0 and not regla[2] in self.F) or (len(cadena) == 2 and cadena[1] in self.listaNoE and not regla[2] in self.F) or (regla[2]=='-1'):
-                                listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]} ×')
-                            else:
-                                listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]}')
-                        print(f"#{numCamino}")
+                            listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]}')
                         self.Transicion(regla[2],cadena,lista,listaRama,numCamino+1)
         else:
             if self.revisarCaracter(cadena[0]):
@@ -121,22 +117,14 @@ class AF:
                         if (len(cadena) == 1 and regla[2] in self.F ) or (len(cadena) == 2 and cadena[1] in self.listaNoE and regla[2] in self.F):
                             listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]} VALIDO ©')
                         else:
-                            if (len(cadena) == 1 and not regla[2] in self.F) or (len(cadena) == 2 and cadena[1] in self.listaNoE and not regla[2] in self.F) or (regla[2]=='-1'):
-                                listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]} ×')
-                            else:
-                                listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]}')
+                            listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]}')
                         cadenaTemp = cadena[1:]
-                        print(f"#{numCamino}")
                         self.Transicion(regla[2],cadenaTemp,lista,listaRama,numCamino+1)
                     if regla[0] == inicio and regla[1] == 'E'and not regla[0]=='-1':
-                        if (len(cadena) == 1 and regla[2] in self.F ) or (len(cadena) == 2 and cadena[1] in self.listaNoE and regla[2] in self.F):
+                        if (len(cadena) == 1 and regla[2] in self.F ) and (regla[1]!='E'):
                             listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]} VALIDO ©')
                         else:
-                            if (len(cadena) == 1 and not regla[2] in self.F) or (len(cadena) == 2 and cadena[1] in self.listaNoE and not regla[2] in self.F) or (regla[2]=='-1'):
-                                listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]} ×')
-                            else:
-                                listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]}')
-                        print(f"#{numCamino}")
+                            listaRama.append(f'C({numCamino}): q{regla[0]}({regla[1]})->q{regla[2]}')
                         self.Transicion(regla[2],cadena,lista,listaRama,numCamino+1)
             else:
                 listaRama.append(f'C({numCamino}): q{inicio}({cadena[0]})->ME')
@@ -160,5 +148,5 @@ class AF:
             print((factor)*tab+'╚»'+listaCaminos[camino])
                 
 
-AF('AT1.txt','aaXabcab')
+AF('AT4.txt','aaba')
 
