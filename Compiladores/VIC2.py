@@ -24,7 +24,7 @@ class Automata:
         return ESTADOS_Q
 
     def obtenerEstadosFinales(self):
-        estadosFinales = self.leerTXT()[1].rstrip()
+        estadosFinales = self.leerTXT()[3].rstrip()
         ESTADOS_FINALES = estadosFinales.split(',')
         return ESTADOS_FINALES
 
@@ -34,7 +34,7 @@ class Automata:
         return INICIAL
 
     def obtenerAlfabeto(self):
-        alfabeto = self.leerTXT()[3].rstrip()
+        alfabeto = self.leerTXT()[1].rstrip()
         SIGMA = alfabeto.split(',')
         return SIGMA
 
@@ -151,7 +151,7 @@ class Automata:
             factor = int(listaCaminos[camino][1])
             print(factor*tab+'└─>'+listaCaminos[camino])
 
-automata1 = Automata('AF.txt', 'aab')
+automata1 = Automata('AT1.txt', 'abcab')
 print(f'Estados del automata: {automata1.estadosQ}')
 print(f'Estado inicial: {automata1.estadoInicial}')
 print(f'Estado(s) final(es): {automata1.estadosFinales}')
