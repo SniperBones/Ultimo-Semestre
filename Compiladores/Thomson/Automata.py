@@ -148,5 +148,5 @@ class AF:
             print((factor)*tab+'╚»'+listaCaminos[camino])
                 
 
-AF('AT4.txt','aaba')
+AF('PAT.txt','aab')
 
