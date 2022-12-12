@@ -143,7 +143,6 @@ public class Servicio
   {
     ParamConsultaUsuario p = (ParamConsultaUsuario) j.fromJson(json,ParamConsultaUsuario.class);
     String email = p.email;
-
     Connection conexion= pool.getConnection();
 
     try
