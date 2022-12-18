@@ -16,7 +16,7 @@ CREATE TABLE Carrito(
 DELIMITER $$
 CREATE DEFINER=`Alejandro`@`localhost` PROCEDURE `borrarArticulo`(IDf int,Cantidadf int)
 BEGIN
-		DECLARE auxCantidad int;
+	DECLARE auxCantidad int;
 	DECLARE track_no INT DEFAULT 0;
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION, NOT FOUND, SQLWARNING
     BEGIN

@@ -1,0 +1,35 @@
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'username',
+  password: 'password',
+  database: 'database'
+});
+
+connection.beginTransaction(function(err) {
+  if (err) {
+    throw err;
+  }
+  connection.query('INSERT INTO users SET ?', {username: 'john'}, function(error, results, fields) {
+    if (error) {
+      return connection.rollback(function() {
+        throw error;
+      });
+    }
+
+    connection.query('INSERT INTO log SET ?', {description: 'added new user'}, function(error, results, fields) {
+      if (error) {
+        return connection.rollback(function() {
+          throw error;
+        });
+      }
+      connection.commit(function(error) {
+        if (error) {
+          return connection.rollback(function() {
+            throw error
+            }
+        }
+      }
+    }
+}
