@@ -1,3 +1,5 @@
+import sys
+
 Frase = "No es palindromo"
 def palindromo(palabra):
     global Frase
@@ -31,7 +33,7 @@ def palindromo(palabra):
                 analizar(r,1)
     print(Frase)
     
-palindromo("cc")
+palindromo(sys.argv[1])
 
 
 
