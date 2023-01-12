@@ -21,6 +21,8 @@ jar cvf Servicio.war WEB-INF META-INF
 
 cp Servicio.war $CATALINA_HOME/webapps/.
 
+sudo java SimpleProxyServer 172.174.176.29 8080 80 8080 &
 
 
-
+IP 0: 20.55.36.210 
+IP 1: 172.174.176.29

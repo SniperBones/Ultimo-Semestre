@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <title>Tienda</title>
+    <link rel="shortcut icon" href="/api/Get?nombre=/Icono.webp">
+    <style>
+        .navbar-custom {
+            background-color: #7E45F3;
+        }
+
+        .navbar-custom .navbar-brand,
+        .navbar-custom .navbar-text {
+            color: white;
+        }
+
+        .navbar-custom .nav-item.active .nav-link,
+        .navbar-custom .nav-item:hover .nav-link {
+            color: #3e1249;
+        }
+
+        .navbar-custom .nav-item.active .nav-link,
+        .navbar-custom .nav-item .nav-link {
+            color: #000000;
+        }
+
+        #main {
+            margin-top: 1%;
+            margin-left: 1%;
+            margin-right: 1%;
+        }
+    </style>
+    <script src="/api/Get?nombre=/WSClient.js"></script>
+    <script>
+        var foto = null
+        var URL = "/api";
+        function get(id) {
+            return document.getElementById(id);
+        }
+        function limpiar_alta() {
+            get("nombre").value = ""
+            get("Descripcion").value = ""
+            get("Precio").value = ""
+            get("Cantidad").value = ""
+            get("alta_imagen").src = "/api/Get?nombre=/no_image.png"
+            get('alta_file').value = ''
+            foto = null;
+        }
+        function alta() {
+            var cliente = new WSClient(URL)
+            cliente.postJson("alta_articulo",
+                {
+                    Nombre: get("nombre").value != "" ? get("nombre").value : null,
+                    Descripcion: get("Descripcion").value != "" ? get("Descripcion").value : null,
+                    Precio: get("Precio").value != "" ? get("Precio").value : null,
+                    Cantidad: get("Cantidad").value != "" ? get("Cantidad").value : null,
+                    foto: foto
+                },
+                function (code, result) {
+                    if (code == 200)
+                        alert("OK");
+                    else
+                        alert(JSON.stringify(result));
+                });
+        }
+        function compra(id, i) {
+            var cliente = new WSClient(URL)
+            cliente.postJson("compra_articulo",
+                {
+                    ID: id,
+                    Cantidad: document.getElementById("Cantidad" + i).value
+                },
+                function (code, result) {
+                    if (code == 200)
+                        alert("OK");
+                    else
+                        alert(JSON.stringify(result));
+                });
+        }
+        function imprimir() {
+            get("Busqueda").value = "";
+            consulta();
+        }
+        function consulta2() {
+            N = get("Busqueda").value;
+            if (N == "") {
+                consulta();
+            } else {
+                var cliente = new WSClient(URL);
+                cliente.postJson("consulta_articulo",
+                    {
+                        Nombre: get("Busqueda").value != "" ? get("Busqueda").value : null
+                    },
+                    function (code, result) {
+                        if (code == 200) {
+                            const count = Object.keys(result).length
+                            let templateHtml = "";
+                            if (count > 0) {
+                                var i = 1;
+                                result.map(res => {
+                                    templateHtml += `
+                                <div class="col">
+                                    <div class="card border-primary mb-3">
+                                        <img src="data:image/jpeg;base64,${res.foto}" class="card-img-top rounded mx-auto d-block" id="imagen${i} ">
+                                        <div class="card-body">
+                                            <h5 class="card-title responsive-font-example" id="Nombre${i}">${res.Nombre}</h5>
+                                            <p class="card-text" id="Precio${i}">$${res.Precio}</p>
+                                            <label for="Cantidad" class="form-label">Cantidad:</label>
+                                            <input type="number" min="1" step="any" id="Cantidad${i}" value="1" />
+                                            <div class="d-grid gap-2 d-md-block">
+                                                <button type="button" class="btn btn-primary" onclick="compra(${res.ID},${i})">Comprar</button>
+                                                <type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Modal${i}">Descripcion</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                    <div class="modal fade" id="Modal${i}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">${res.Nombre}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>${res.Descripcion}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                `
+                                    i++
+                                });
+                                document.querySelector("#componente").innerHTML = templateHtml
+                            } else {
+                                document.querySelector("#componente").innerHTML = `
+                            <div class="container">
+                                <h1>Sin coincidencias</h1>
+                                <button type="button" class="btn btn-primary m-3" onclick="imprimir()">Regresar a buscar</button>
+                            </div>
+                            `
+                            }
+
+                        }
+                        else
+                            // el objeto "result" es de tipo Error
+                            alert(JSON.stringify(result));
+                    });
+            }
+        }
+        function consulta() {
+            var cliente = new WSClient(URL);
+            cliente.postJson("consulta_articulos",
+                {
+                    Nombre: "Leche"
+                },
+                function (code, result) {
+                    if (code == 200) {
+                        const count = Object.keys(result).length
+                        let templateHtml = "";
+                        var i = 1;
+                        result.map(res => {
+                            templateHtml += `
+                            <div class="col">
+                                <div class="card border-primary mb-3">
+                                    <img src="data:image/jpeg;base64,${res.foto}" class="card-img-top rounded mx-auto d-block" id="imagen${i} ">
+                                    <div class="card-body">
+                                        <h5 class="card-title responsive-font-example" id="Nombre${i}">${res.Nombre}</h5>
+                                        <p class="card-text" id="Precio${i}">$${res.Precio}</p>
+                                        <label for="Cantidad" class="form-label">Cantidad:</label>
+                                        <input type="number" min="1" step="any" id="Cantidad${i}" value="1" />
+                                        <div class="d-grid gap-2 d-md-block">
+                                            <button type="button" class="btn btn-primary" onclick="compra(${res.ID},${i})">Comprar</button>
+                                            <type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#Modal${i}">Descripcion</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                <div class="modal fade" id="Modal${i}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">${res.Nombre}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>${res.Descripcion}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                            `
+                            i++
+                        });
+                        document.querySelector("#componente").innerHTML = templateHtml
+                    }
+                    else
+                        // el objeto "result" es de tipo Error
+                        alert(JSON.stringify(result));
+                });
+        }
+        function carrito() {
+            var cliente = new WSClient(URL);
+            cliente.postJson("consulta_carrito",
+                {
+                },
+                function (code, result) {
+                    if (code == 200) {
+                        const count = Object.keys(result).length
+                        let templateHtml = "";
+                        let Total = 0;
+                        if (count > 0) {
+                            var i = 1;
+                            result.map(res => {
+                                templateHtml += `
+                                <div class="col">
+                                    <div class="card border-primary mb-3">
+                                        <img src="data:image/jpeg;base64,${res.foto}" class="card-img-top rounded mx-auto d-block" id="imagen2${i} ">
+                                        <div class="card-body">
+                                            <h5 class="card-title responsive-font-example" id="Nombre2${i}">${res.Nombre}</h5>
+                                            <p class="card-text" id="Precio2${i}">$ ${res.Precio}</p>
+                                            <div>
+                                                <label for="Cantidad" class="form-label">Cantidad:${res.Cantidad2}</label>
+                                            </div>
+                                            <div>
+                                                <label for="Cantidad" class="form-label">Costo:$ ${res.Cantidad2 * res.Precio}</label>
+                                            </div>
+                                            <div class="d-grid gap-2 d-md-block">
+                                                <button type="button" class="btn btn-primary" onclick="compra(${res.ID},${i})">Comprar</button>
+                                                <type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#Modals${i}">Eliminar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                    <div class="modal fade" id="Modals${i}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel2">${res.Nombre}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>¿ Deseas eliminar este articulo del carrito ?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="borrar(${res.ID},${res.Cantidad2})">Si</button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                `
+                                Total = Total + (res.Cantidad2 * res.Precio)
+                                i++
+                            });
+                            document.querySelector("#componente2").innerHTML = templateHtml
+                        } else {
+                            document.querySelector("#componente2").innerHTML = `
+                            <div class="container">
+                                <h1>Necesitas Comprar mas ..... :)</h1>
+                            </div>
+                            `
+                        }
+                        document.getElementById("Total").innerHTML = "Total: $" + Total
+                    }
+                    else
+                        // el objeto "result" es de tipo Error
+                        alert(JSON.stringify(result));
+                });
+        }
+        function borrar(id, cantidad) {
+            var cliente = new WSClient(URL)
+            cliente.postJson("borrar_articulo",
+                {
+                    ID: id,
+                    Cantidad: cantidad
+                },
+                function (code, result) {
+                    if (code == 200)
+                        alert("OK");
+                    else
+                        alert(JSON.stringify(result));
+                    carrito()
+                });
+        }
+        function borrar2(id, cantidad) {
+            var cliente = new WSClient(URL)
+            cliente.postJson("borrar_articulo",
+                {
+                    ID: id,
+                    Cantidad: cantidad
+                },
+                function (code, result) {
+                });
+        }
+        function borrarAll() {
+            var cliente = new WSClient(URL)
+            cliente.postJson("consulta_carrito", {
+            },
+            function (code, result) {
+                if (code == 200) {
+                    const count = Object.keys(result).length
+                    let Total = 0;
+                    if (count > 0) {
+                        result.map(res => {
+                            borrar2(res.ID,res.Cantidad2)
+                        });
+                    }
+                }
+                else
+                    alert(JSON.stringify(result));
+            });
+            alert("Se elimino el carrito de compras")
+            window.location.reload()
+        }
+        function readSingleFile(files, imagen) {
+            var file = files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                imagen.src = reader.result;
+                // reader.result incluye al principio: "data:image/jpeg;base64,"
+                foto = reader.result.split(',')[1];
+            };
+            reader.readAsDataURL(file);
+        }
+        function quita_foto() {
+            foto = null;
+            get('alta_imagen').src = 'assets/no_image.png';
+            get('alta_file').value = '';
+        }
+    </script>
+
+</head>
+
+<body onload="consulta()">
+    <ul class="nav nav-tabs navbar-custom" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <img src="/api/Get?nombre=/Icono.webp" alt="Bootstrap" width="40" height="40">
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link disabled">GengarMarket</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#Articulos" type="button"
+                role="tab" aria-controls="Articulos" aria-selected="true" onclick="consulta()">Articulos</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="addArt-tab" data-bs-toggle="tab" data-bs-target="#addArt" type="button"
+                role="tab" aria-controls="addArt" aria-selected="false">Agregar Articulo</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="Carrito-tab" data-bs-toggle="tab" data-bs-target="#Carrito" type="button"
+                role="tab" aria-controls="Carrito" aria-selected="false" onclick="carrito()">Carrito</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="Articulos" role="tabpanel" aria-labelledby="Articulos-tab">
+            <div class="card" id="main">
+                <div class="card text-center m-3">
+                    <div class="card-header">
+                        <h1>Compra de articulos</h1>
+                    </div>
+                    <div class="container-fluid m-2">
+                        <div class="input-group">
+                            <form class="d-flex">
+                                <input class="form-control me-2" type="search" placeholder="Me gustaria ..."
+                                    aria-label="Search" id="Busqueda">
+                                <button class="btn btn-outline-success" type="button"
+                                    onclick="consulta2()">Buscar</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row row-cols-1 row-cols-md-5 g-6" id="componente">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="addArt" role="tabpanel" aria-labelledby="addArt-tab">
+            <div class="card border-info" id="main">
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h1>Alta de Articulo</h1>
+                    </div>
+                    <form class="row g-3">
+                        <div class="col-md-12">
+                            <label for="Nombre" class="form-label">Nombre del articulo</label>
+                            <input type="text" class="form-control" id="nombre" />
+                        </div>
+                        <div class="col-md-12">
+                            <label for="Descripcion" class="form-label">Descripcion del articulo</label>
+                            <textarea class="form-control" id="Descripcion" rows="4"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="Cantidad" class="form-label">Cantidad:</label>
+                            <input type="number" min="1" step="any" id="Cantidad" value="1" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="Precio">Precio:</label>
+                            <input type="text" id="Precio" pattern="^\d{1,3}(,\d{3})*(\.\d+)?$" data-type="currency"
+                                placeholder="$10.00">
+                        </div>
+                        <div class="col-md-12">
+                            Foto del articulo:
+                        </div>
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <img id="alta_imagen" class="img-thumbnail" src="/api/Get?nombre=/no_image.png" width="30%"></img>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="file" id="alta_file" onchange="readSingleFile(files,get('alta_imagen'))"
+                                multiple="false" accept="image/*" />
+                        </div>
+                        <div class="col-md-12">
+                            <button type="button" onclick="quita_foto()" class="btn btn-dark">Borrar foto</button>
+                        </div>
+                        <div class="col-md-4"></div>
+                        <div class="d-grid gap-2 d-md-block">
+                            <button type="button" class="btn btn-primary" onclick="alta()">Agregar</button>
+                            <button type="button" class="btn btn-danger" onclick="limpiar_alta()">Limpiar
+                                Pantalla</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="Carrito" role="tabpanel" aria-labelledby="Carrito-tab">
+            <div class="card" id="main">
+                <div class="card text-center m-3">
+                    <div class="card-header">
+                        <h1>Articulos en carrito</h1>
+                    </div>
+                    <div class="container-fluid m-2">
+                        <div class="input-group">
+                            <form class="d-grid gap-2 d-md-block">
+                                <button class="btn btn-primary" type="button" onclick="">Seguir Comprando</button>
+                                <type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#ModalsCarrito">Eliminar Carrito</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal fade" id="ModalsCarrito" tabindex="-1" aria-labelledby="exampleModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel2C">Elimar Carrito</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>¿ Deseas eliminar carrito ?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="borrarAll()">Si</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row row-cols-1 row-cols-md-5 g-6" id="componente2">
+
+                </div>
+                <div>
+                    <label for="Total" class="form-label" id="Total">Total:</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

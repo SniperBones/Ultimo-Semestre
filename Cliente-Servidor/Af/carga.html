@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" charset="utf-8">
+		<meta name="author" content="Carlos Pineda Guerrero. 2021-2023">
+		<script>
+			// utilizar la siguiente URL cuando se ingrese en un navegador: https://aplicación-de-funciones.azurewebsites.net/api/Get?nombre=/cargar.html
+			// donde "aplicación-de-funciones" es el nombre de la aplicación de funciones y previamente se haya cargado el archivo "cargar.html" en el 
+			// directorio c:\home\data de la cuenta de almacenamiento en Azure.
+			//var URL = "/api/Cargar";
+			// utilizar la siguiente URL para prueba locales (cuando se ejecuta "cargar.html" dando doble clic en el explorador)
+			var URL = "http://localhost:7273/api/Cargar";
+			var num_archivos;
+			var num_archivos_enviados;
+			function post(url,args,callback)
+			{
+				var body = JSON.stringify(args);
+				var req = new XMLHttpRequest();
+				req.open("POST",url);
+				req.setRequestHeader("Accept","application/json");
+				req.setRequestHeader("Content-Type","application/json");
+				req.onload = function()
+				{
+					if (callback != null) callback(req.status,req.response);
+				};
+				req.send(body);
+			}
+			function leerArchivo(file)
+			{
+				var reader = new FileReader();
+				reader.onload = function(e)
+				{
+					var ruta = document.getElementById("ruta").value;
+					var nombre = file.name;
+					var contenido = reader.result.split(',')[1];
+					post(URL,
+					{
+						ruta: ruta,
+						nombre: nombre,
+						contenido: contenido,
+					},
+					function(status,result)
+					{
+						if (status == 200)
+						{
+							num_archivos_enviados++;
+							if (num_archivos_enviados == num_archivos)
+							{
+								alert("Número de archivos enviados: " + num_archivos_enviados);
+								document.getElementById("abrir_archivos").value = "";
+							}
+						}
+						else
+							alert("Error: " + JSON.stringify(result));
+					});
+				};
+				// lee el archivo como Base 64
+				reader.readAsDataURL(file);
+			}
+			function abrirArchivos(files)
+			{
+				num_archivos = files.length;
+				num_archivos_enviados = 0;
+				for (var i = 0; i < files.length; i++) leerArchivo(files[i]);
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Cargar archivos</h1>
+		Ruta:<input id="ruta"/ style="width:300px"><br><br>
+		<input type="file" id="abrir_archivos" onchange="abrirArchivos(files)" multiple="true"/>
+	</body>
+</html>
