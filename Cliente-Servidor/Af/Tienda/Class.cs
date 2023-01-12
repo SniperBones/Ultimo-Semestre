@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using System.IO;
 using Newtonsoft.Json;
 
-namespace FunctionApp1
+namespace Tienda
 {
     public static class Get
     {

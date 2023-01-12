@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace FunctionApp1
+namespace Tienda
 {
     internal class MimeMapping
     {
