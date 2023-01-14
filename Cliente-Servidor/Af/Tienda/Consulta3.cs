@@ -12,18 +12,19 @@ using Newtonsoft.Json;
 using MySql.Data.MySqlClient;
 
 namespace Tienda{
-    public static class Consulta1{
+    public static class Consulta3{
         public class Articulo2 {
             public int? ID;
             public string Nombre;
             public string Descripcion;
             public float Precio;
             public int Cantidad;
+            public int Cantidad2;
             public string foto;
         }
         class ParamConsultaUsuario
         {
-            public int ID;
+            public string Nombre;
         }
         class Error
         {
@@ -33,12 +34,10 @@ namespace Tienda{
                 this.mensaje = mensaje;
             }
         }
-        [FunctionName("Consulta1")]
-        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post",Route ="consulta_articulos")] HttpRequest req,ILogger log){
+        [FunctionName("Consulta3")]
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post",Route ="consulta_carrito")] HttpRequest req,ILogger log){
             try{
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                ParamConsultaUsuario data = JsonConvert.DeserializeObject<ParamConsultaUsuario>(requestBody);
-                int ID = data.ID;
                 string Server = Environment.GetEnvironmentVariable("Server");
                 string UserID = Environment.GetEnvironmentVariable("UserID");
                 string Password = Environment.GetEnvironmentVariable("Password");
@@ -49,9 +48,8 @@ namespace Tienda{
                 conexion.Open();
 
                 try{
-                    var cmd = new MySqlCommand("SELECT ID_articulo,Nombre,Descripcion,Precio,Cantidad,Foto,length(Foto) FROM articulos");
+                    var cmd = new MySqlCommand("SELECT a.ID_articulo,a.Nombre,a.Descripcion,a.Precio,a.Cantidad,a.Foto,length(a.Foto),b.Cantidad FROM Articulos a INNER JOIN Carrito b ON a.ID_articulo = b.ID_articulo;");
                     cmd.Connection = conexion;
-                    cmd.Parameters.AddWithValue("@ID",ID);
                     MySqlDataReader r = cmd.ExecuteReader();
                     List<Articulo2> articulos = new List<Articulo2>();
                     try{
@@ -68,6 +66,7 @@ namespace Tienda{
                                 r.GetBytes(5,0,foto,0,longitud);
                                 auxA.foto = Convert.ToBase64String(foto);
                             }
+                            auxA.Cantidad2 = r.GetInt32(7);
                             articulos.Add(auxA);
                         }
                         // Notar que el formato de fecha es compatible con <input> de HTML con tipo "datetime-local"

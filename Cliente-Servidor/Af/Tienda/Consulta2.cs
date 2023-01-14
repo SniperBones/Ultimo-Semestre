@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using MySql.Data.MySqlClient;
 
 namespace Tienda{
-    public static class Consulta1{
+    public static class Consulta2{
         public class Articulo2 {
             public int? ID;
             public string Nombre;
@@ -23,7 +23,7 @@ namespace Tienda{
         }
         class ParamConsultaUsuario
         {
-            public int ID;
+            public string Nombre;
         }
         class Error
         {
@@ -33,12 +33,12 @@ namespace Tienda{
                 this.mensaje = mensaje;
             }
         }
-        [FunctionName("Consulta1")]
-        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post",Route ="consulta_articulos")] HttpRequest req,ILogger log){
+        [FunctionName("Consulta2")]
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post",Route ="consulta_articulo")] HttpRequest req,ILogger log){
             try{
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 ParamConsultaUsuario data = JsonConvert.DeserializeObject<ParamConsultaUsuario>(requestBody);
-                int ID = data.ID;
+                string Nombre = data.Nombre;
                 string Server = Environment.GetEnvironmentVariable("Server");
                 string UserID = Environment.GetEnvironmentVariable("UserID");
                 string Password = Environment.GetEnvironmentVariable("Password");
@@ -49,9 +49,9 @@ namespace Tienda{
                 conexion.Open();
 
                 try{
-                    var cmd = new MySqlCommand("SELECT ID_articulo,Nombre,Descripcion,Precio,Cantidad,Foto,length(Foto) FROM articulos");
+                    var cmd = new MySqlCommand("SELECT ID_articulo,Nombre,Descripcion,Precio,Cantidad,Foto,length(Foto) FROM articulos WHERE Nombre LIKE '%"+Nombre+"%' OR Descripcion LIKE '%"+Nombre+"%' ");
                     cmd.Connection = conexion;
-                    cmd.Parameters.AddWithValue("@ID",ID);
+                    cmd.Parameters.AddWithValue("@Nombre",Nombre);
                     MySqlDataReader r = cmd.ExecuteReader();
                     List<Articulo2> articulos = new List<Articulo2>();
                     try{
