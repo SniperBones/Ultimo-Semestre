@@ -1,0 +1,19 @@
+{
+  "generatedBy": "Microsoft.NET.Sdk.Functions.Generator-4.1.3",
+  "configurationSource": "attributes",
+  "bindings": [
+    {
+      "type": "httpTrigger",
+      "route": "Principal",
+      "methods": [
+        "get",
+        "post"
+      ],
+      "authLevel": "function",
+      "name": "req"
+    }
+  ],
+  "disabled": false,
+  "scriptFile": "../bin/Tienda.dll",
+  "entryPoint": "Tienda.Function1.Run"
+}
