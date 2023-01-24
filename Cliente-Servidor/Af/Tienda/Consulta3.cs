@@ -22,10 +22,6 @@ namespace Tienda{
             public int Cantidad2;
             public string foto;
         }
-        class ParamConsultaUsuario
-        {
-            public string Nombre;
-        }
         class Error
         {
             public string mensaje;
